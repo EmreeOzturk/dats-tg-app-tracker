@@ -36,6 +36,7 @@ import {
 
 import useUserData from '@/hooks/useUserData'
 import { User } from '@/types/user'
+import { Beams } from "../ui/grid-hero"
 
 const columns: ColumnDef<User>[] = [
     {
@@ -338,6 +339,7 @@ export default function UserTable() {
                 <div>Total Upload Speed: {totals.uploadSpeed.toFixed(2)} Mbps</div>
                 <div>Total Shared Time: {totals.sharedTime.toFixed(2)} hours</div>
             </div>
+            <Beams />
         </div>
     )
 }

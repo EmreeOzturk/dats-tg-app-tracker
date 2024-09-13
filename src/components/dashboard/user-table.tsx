@@ -69,7 +69,7 @@ const columns: ColumnDef<User>[] = [
     },
     {
         accessorKey: "profilePhoto",
-        header: "Avatar",
+        header: "",
         cell: ({ row }) => {
             const profilePhoto = row.getValue("profilePhoto") as string | null;
             return (

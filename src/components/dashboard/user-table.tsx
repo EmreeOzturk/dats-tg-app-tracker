@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import { useMemo, useCallback, useState } from "react"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -139,45 +139,16 @@ const columns: ColumnDef<User>[] = [
         },
         cell: ({ row }) => <div className="ml-10">{row.getValue("totalTimeOfUsingApp")} hours</div>,
     },
-    // {
-    //     id: "actions",
-    //     enableHiding: false,
-    //     cell: ({ row }) => {
-    //         const user = row.original
-
-    //         return (
-    //             <DropdownMenu>
-    //                 <DropdownMenuTrigger asChild>
-    //                     <Button variant="ghost" className="h-8 w-8 p-0">
-    //                         <span className="sr-only">Open menu</span>
-    //                         <MoreHorizontal className="h-4 w-4" />
-    //                     </Button>
-    //                 </DropdownMenuTrigger>
-    //                 <DropdownMenuContent align="end">
-    //                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-    //                     <DropdownMenuItem
-    //                         onClick={() => navigator.clipboard.writeText(user._id.toString())}
-    //                     >
-    //                         Copy user ID
-    //                     </DropdownMenuItem>
-    //                     <DropdownMenuSeparator />
-    //                     <DropdownMenuItem>View user details</DropdownMenuItem>
-    //                     <DropdownMenuItem>Ban user</DropdownMenuItem>
-    //                 </DropdownMenuContent>
-    //             </DropdownMenu>
-    //         )
-    //     },
-    // },
 ]
 
 export default function UserTable() {
     const { users, isLoading, error } = useUserData()
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-    const [rowSelection, setRowSelection] = React.useState({})
+    const [sorting, setSorting] = useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+    const [rowSelection, setRowSelection] = useState({})
 
-    const data = React.useMemo(() => {
+    const data = useMemo(() => {
         if (!users?.data) return []
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return users.data.sort((a: any, b: any) => b.points - a.points)
@@ -207,7 +178,7 @@ export default function UserTable() {
         },
     })
 
-    const calculateActiveUsers = React.useCallback(() => {
+    const calculateActiveUsers = useCallback(() => {
         if (!data) return { daily: 0, weekly: 0, monthly: 0 }
         const now = new Date()
         const oneDay = 24 * 60 * 60 * 1000
@@ -227,7 +198,7 @@ export default function UserTable() {
         }, { daily: 0, weekly: 0, monthly: 0 })
     }, [data])
 
-    const calculateTotals = React.useCallback(() => {
+    const calculateTotals = useCallback(() => {
         if (!data) return { downloadSpeed: 0, uploadSpeed: 0, sharedTime: 0 }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return data.reduce((acc: any, user: User) => {
@@ -238,8 +209,8 @@ export default function UserTable() {
         }, { downloadSpeed: 0, uploadSpeed: 0, sharedTime: 0 })
     }, [data])
 
-    const activeUsers = React.useMemo(() => calculateActiveUsers(), [calculateActiveUsers])
-    const totals = React.useMemo(() => calculateTotals(), [calculateTotals])
+    const activeUsers = useMemo(() => calculateActiveUsers(), [calculateActiveUsers])
+    const totals = useMemo(() => calculateTotals(), [calculateTotals])
 
     if (isLoading) {
         return <div>Loading...</div>

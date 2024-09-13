@@ -10,7 +10,7 @@ export interface User {
   isFollowingTwitter: boolean;
   hasJoinedDiscord: boolean;
   hasJoinedTelegram: boolean;
-  profilePhoto: string;
+  profilePhoto: string | null;
   evmAddress: string;
   substrateAddress: string;
   lastCheckIn: string;

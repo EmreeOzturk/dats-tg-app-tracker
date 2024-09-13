@@ -2,6 +2,7 @@
 
 import { useMemo, useCallback, useState } from "react"
 import { UserTableSkeleton } from "@/components/dashboard/user-table-skeleton"
+import Image from "next/image"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -65,6 +66,32 @@ const columns: ColumnDef<User>[] = [
         accessorKey: "rank",
         header: "Rank",
         cell: ({ row }) => <div>{row.index + 1}</div>,
+    },
+    {
+        accessorKey: "profilePhoto",
+        header: "Avatar",
+        cell: ({ row }) => {
+            const profilePhoto = row.getValue("profilePhoto") as string | null;
+            return (
+                <div className="flex items-center">
+                    {profilePhoto ? (
+                        <Image
+                            src={profilePhoto}
+                            alt={`${row.getValue("username")}'s avatar`}
+                            width={32}
+                            height={32}
+                            className="rounded-full"
+                        />
+                    ) : (
+                        <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                            <span className="text-gray-500 text-xs">
+                                {(row.getValue("username") as string).charAt(0).toUpperCase()}
+                            </span>
+                        </div>
+                    )}
+                </div>
+            );
+        },
     },
     {
         accessorKey: "username",

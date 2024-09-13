@@ -13,7 +13,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -21,9 +21,6 @@ import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -38,7 +35,6 @@ import {
 
 import useUserData from '@/hooks/useUserData'
 import { User } from '@/types/user'
-import LogoutButton from './logout-button'
 
 const columns: ColumnDef<User>[] = [
     {
@@ -62,6 +58,11 @@ const columns: ColumnDef<User>[] = [
         ),
         enableSorting: false,
         enableHiding: false,
+    },
+    {
+        accessorKey: "rank",
+        header: "Rank",
+        cell: ({ row }) => <div>{row.index + 1}</div>,
     },
     {
         accessorKey: "username",
@@ -91,7 +92,7 @@ const columns: ColumnDef<User>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => <div>{row.getValue("downloadSpeed")} Mbps</div>,
+        cell: ({ row }) => <div className="ml-8">{row.getValue("downloadSpeed") ?? 0} Mbps</div>,
     },
     {
         accessorKey: "uploadSpeed",
@@ -106,47 +107,67 @@ const columns: ColumnDef<User>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => <div>{row.getValue("uploadSpeed")} Mbps</div>,
+        cell: ({ row }) => <div className="ml-8">{row.getValue("uploadSpeed") ?? 0} Mbps</div>,
     },
     {
         accessorKey: "points",
-        header: "Score",
-        cell: ({ row }) => <div>{row.getValue("points")}</div>,
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Score
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: ({ row }) => <div className="ml-4">{row.getValue("points")}</div>,
     },
     {
         accessorKey: "totalTimeOfUsingApp",
-        header: "Total Shared Time",
-        cell: ({ row }) => <div>{row.getValue("totalTimeOfUsingApp")} hours</div>,
-    },
-    {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-            const user = row.original
-
+        header: ({ column }) => {
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(user._id.toString())}
-                        >
-                            Copy user ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View user details</DropdownMenuItem>
-                        <DropdownMenuItem>Ban user</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Total Shared Time
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
             )
         },
+        cell: ({ row }) => <div className="ml-10">{row.getValue("totalTimeOfUsingApp")} hours</div>,
     },
+    // {
+    //     id: "actions",
+    //     enableHiding: false,
+    //     cell: ({ row }) => {
+    //         const user = row.original
+
+    //         return (
+    //             <DropdownMenu>
+    //                 <DropdownMenuTrigger asChild>
+    //                     <Button variant="ghost" className="h-8 w-8 p-0">
+    //                         <span className="sr-only">Open menu</span>
+    //                         <MoreHorizontal className="h-4 w-4" />
+    //                     </Button>
+    //                 </DropdownMenuTrigger>
+    //                 <DropdownMenuContent align="end">
+    //                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    //                     <DropdownMenuItem
+    //                         onClick={() => navigator.clipboard.writeText(user._id.toString())}
+    //                     >
+    //                         Copy user ID
+    //                     </DropdownMenuItem>
+    //                     <DropdownMenuSeparator />
+    //                     <DropdownMenuItem>View user details</DropdownMenuItem>
+    //                     <DropdownMenuItem>Ban user</DropdownMenuItem>
+    //                 </DropdownMenuContent>
+    //             </DropdownMenu>
+    //         )
+    //     },
+    // },
 ]
 
 export default function UserTable() {
@@ -156,8 +177,14 @@ export default function UserTable() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
 
+    const data = React.useMemo(() => {
+        if (!users?.data) return []
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return users.data.sort((a: any, b: any) => b.points - a.points)
+    }, [users])
+
     const table = useReactTable({
-        data: users?.data ?? [],
+        data,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -173,7 +200,46 @@ export default function UserTable() {
             columnVisibility,
             rowSelection,
         },
+        initialState: {
+            pagination: {
+                pageSize: 10
+            },
+        },
     })
+
+    const calculateActiveUsers = React.useCallback(() => {
+        if (!data) return { daily: 0, weekly: 0, monthly: 0 }
+        const now = new Date()
+        const oneDay = 24 * 60 * 60 * 1000
+        const oneWeek = 7 * oneDay
+        const oneMonth = 30 * oneDay
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return data.reduce((acc: any, user: User) => {
+            const lastCheckIn = new Date(user.lastCheckIn)
+            const timeDiff = now.getTime() - lastCheckIn.getTime()
+
+            if (timeDiff <= oneDay) acc.daily++
+            if (timeDiff <= oneWeek) acc.weekly++
+            if (timeDiff <= oneMonth) acc.monthly++
+
+            return acc
+        }, { daily: 0, weekly: 0, monthly: 0 })
+    }, [data])
+
+    const calculateTotals = React.useCallback(() => {
+        if (!data) return { downloadSpeed: 0, uploadSpeed: 0, sharedTime: 0 }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return data.reduce((acc: any, user: User) => {
+            acc.downloadSpeed += user.downloadSpeed ?? 0
+            acc.uploadSpeed += user.uploadSpeed ?? 0
+            acc.sharedTime += user.totalTimeOfUsingApp
+            return acc
+        }, { downloadSpeed: 0, uploadSpeed: 0, sharedTime: 0 })
+    }, [data])
+
+    const activeUsers = React.useMemo(() => calculateActiveUsers(), [calculateActiveUsers])
+    const totals = React.useMemo(() => calculateTotals(), [calculateTotals])
 
     if (isLoading) {
         return <div>Loading...</div>
@@ -185,6 +251,7 @@ export default function UserTable() {
 
     return (
         <div className="w-full">
+
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter usernames..."
@@ -265,10 +332,15 @@ export default function UserTable() {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex items-center justify-between space-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
                     {table.getFilteredSelectedRowModel().rows.length} of{" "}
                     {table.getFilteredRowModel().rows.length} row(s) selected.
+                </div>
+                <div className="flex space-x-2 text-sm text-muted-foreground">
+                    <div>Daily Active Users: {activeUsers.daily}</div>
+                    <div>Weekly Active Users: {activeUsers.weekly}</div>
+                    <div>Monthly Active Users: {activeUsers.monthly}</div>
                 </div>
                 <div className="space-x-2">
                     <Button
@@ -289,7 +361,11 @@ export default function UserTable() {
                     </Button>
                 </div>
             </div>
-            <LogoutButton />
+            <div className="mt-4 text-sm text-muted-foreground">
+                <div>Total Download Speed: {totals.downloadSpeed.toFixed(2)} Mbps</div>
+                <div>Total Upload Speed: {totals.uploadSpeed.toFixed(2)} Mbps</div>
+                <div>Total Shared Time: {totals.sharedTime.toFixed(2)} hours</div>
+            </div>
         </div>
     )
 }

@@ -13,7 +13,7 @@ export function UserTableSkeleton() {
         <Table>
           <TableHeader>
             <TableRow>
-              {Array.from({ length: 9 }).map((_, index) => (
+              {Array.from({ length: 10 }).map((_, index) => (
                 <TableHead key={index}>
                   <Skeleton className="h-6 w-full" />
                 </TableHead>
@@ -21,8 +21,11 @@ export function UserTableSkeleton() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.from({ length: 10 }).map((_, rowIndex) => (
+            {Array.from({ length: 4 }).map((_, rowIndex) => (
               <TableRow key={rowIndex}>
+                <TableCell>
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </TableCell>
                 {Array.from({ length: 9 }).map((_, cellIndex) => (
                   <TableCell key={cellIndex}>
                     <Skeleton className="h-6 w-full" />

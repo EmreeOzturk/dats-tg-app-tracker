@@ -241,7 +241,7 @@ export default function UserTable() {
     const activeUsers = useMemo(() => calculateActiveUsers(), [calculateActiveUsers])
     const totals = useMemo(() => calculateTotals(), [calculateTotals])
 
-    if (isLoading) {
+    if (!isLoading) {
         return <UserTableSkeleton />
     }
 

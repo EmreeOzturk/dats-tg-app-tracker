@@ -15,7 +15,7 @@ export function UserTableSkeleton() {
             <TableRow>
               {Array.from({ length: 10 }).map((_, index) => (
                 <TableHead key={index}>
-                  <Skeleton className="h-6 w-28" />
+                  <Skeleton className="h-6 w-full" />
                 </TableHead>
               ))}
             </TableRow>
@@ -43,7 +43,7 @@ export function UserTableSkeleton() {
           <Skeleton className="h-4 w-[100px]" />
           <Skeleton className="h-4 w-[100px]" />
         </div>
-        <div className="space-x-2">
+        <div className="space-x-2 flex">
           <Skeleton className="h-8 w-[80px]" />
           <Skeleton className="h-8 w-[80px]" />
         </div>

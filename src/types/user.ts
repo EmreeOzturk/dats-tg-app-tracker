@@ -13,4 +13,5 @@ export interface User {
   profilePhoto: string;
   evmAddress: string;
   substrateAddress: string;
+  lastCheckIn: string;
 }

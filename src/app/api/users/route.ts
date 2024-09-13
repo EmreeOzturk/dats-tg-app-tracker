@@ -4,10 +4,7 @@ import { verifyAuth } from "@/lib/verifyUser";
 export async function GET() {
   const user = await verifyAuth();
   if (!user) {
-    return NextResponse.redirect(
-      new URL("/", "http://localhost:3000").toString(),
-      { status: 302 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
     const client = clientPromise;

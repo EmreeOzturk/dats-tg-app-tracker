@@ -2,7 +2,6 @@
 
 import { useMemo, useCallback, useState } from "react"
 import { UserTableSkeleton } from "@/components/dashboard/user-table-skeleton"
-import Image from "next/image"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -75,12 +74,11 @@ const columns: ColumnDef<User>[] = [
             return (
                 <div className="flex items-center">
                     {profilePhoto ? (
-                        <Image
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
                             src={profilePhoto}
                             alt={`${row.getValue("username")}'s avatar`}
-                            width={32}
-                            height={32}
-                            className="rounded-full"
+                            className="rounded-full w-8 h-8"
                         />
                     ) : (
                         <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">

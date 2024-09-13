@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useCallback, useState } from "react"
+import { UserTableSkeleton } from "@/components/dashboard/user-table-skeleton"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -213,7 +214,7 @@ export default function UserTable() {
     const totals = useMemo(() => calculateTotals(), [calculateTotals])
 
     if (isLoading) {
-        return <div>Loading...</div>
+        return <UserTableSkeleton />
     }
 
     if (error) {

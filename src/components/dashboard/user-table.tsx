@@ -363,7 +363,7 @@ export default function UserTable() {
             <div className="mt-4 text-sm text-muted-foreground">
                 <div>Total Download Speed: {totals.downloadSpeed.toFixed(2)} Mbps</div>
                 <div>Total Upload Speed: {totals.uploadSpeed.toFixed(2)} Mbps</div>
-                <div>Total Shared Time: {totals.sharedTime.toFixed(2)} hours</div>
+                <div>Total Shared Time: {totals.sharedTime.toFixed(2) / 3600000} hours</div>
             </div>
             <Beams />
         </div>

@@ -83,7 +83,7 @@ const columns: ColumnDef<User>[] = [
                     ) : (
                         <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
                             <span className="text-gray-500 text-xs">
-                                {(row.getValue("username") as string).charAt(0).toUpperCase()}
+                                {(row.getValue("username") as string)?.charAt(0).toUpperCase()}
                             </span>
                         </div>
                     )}

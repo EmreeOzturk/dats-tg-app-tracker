@@ -164,7 +164,8 @@ const columns: ColumnDef<User>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => <div className="ml-10">{row.getValue("totalTimeOfUsingApp")} hours</div>,
+        // cell: ({ row }) => <div className="ml-10">{row.getValue("totalTimeOfUsingApp")} hours</div>, //convert millisecon to hours
+        cell: ({ row }) => <div className="ml-10">{(row.getValue("totalTimeOfUsingApp") as number / 3600000).toFixed(2)} hours</div>,
     },
 ]
 

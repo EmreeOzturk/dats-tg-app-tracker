@@ -8,7 +8,7 @@ export default async function DashboardPage() {
         redirect("/");
     }
     return (
-        <div className="w-full relative overflow-hidden h-screen py-12 px-4
+        <div className="w-full relative  h-full py-12 px-4
           bg-gradient-to-b from-slate-950 to-slate-900
         ">
             <div className="max-w-7xl mx-auto w-full relative overflow-hidden  p-4  ">

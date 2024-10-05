@@ -2,6 +2,8 @@ import UserTable from '@/components/dashboard/user-table';
 import { redirect } from "next/navigation";
 import { verifyAuth } from '@/lib/verifyUser';
 import LogoutButton from '@/components/dashboard/logout-button';
+
+export const maxDuration = 60;
 export default async function DashboardPage() {
     const user = await verifyAuth();
     if (!user) {

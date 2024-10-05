@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/client";
 import { verifyAuth } from "@/lib/verifyUser";
+<<<<<<< HEAD
 
+=======
+export const maxDuration = 60;
+>>>>>>> 19666fd77c83173c034bb69a648a5b7df9888293
 export async function GET() {
   const user = await verifyAuth();
   if (!user) {

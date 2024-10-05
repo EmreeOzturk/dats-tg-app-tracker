@@ -164,8 +164,7 @@ const columns: ColumnDef<User>[] = [
                 </Button>
             )
         },
-        // cell: ({ row }) => <div className="ml-10">{row.getValue("totalTimeOfUsingApp")} hours</div>, //convert millisecon to hours
-        cell: ({ row }) => <div className="ml-10">{(row.getValue("totalTimeOfUsingApp") as number / 3600000).toFixed(2)} hours</div>,
+        cell: ({ row }) => <div className="ml-10">{((row.getValue("totalTimeOfUsingApp") as number) / 3600000).toFixed(2)} hours</div>,
     },
 ]
 
@@ -177,9 +176,8 @@ export default function UserTable() {
     const [rowSelection, setRowSelection] = useState({})
 
     const data = useMemo(() => {
-        if (!users?.data) return []
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return users.data.sort((a: any, b: any) => b.points - a.points)
+        if (!users) return []
+        return [...users].sort((a, b) => b.points - a.points)
     }, [users])
 
     const table = useReactTable({
@@ -207,14 +205,13 @@ export default function UserTable() {
     })
 
     const calculateActiveUsers = useCallback(() => {
-        if (!data) return { daily: 0, weekly: 0, monthly: 0 }
+        if (!data.length) return { daily: 0, weekly: 0, monthly: 0 }
         const now = new Date()
         const oneDay = 24 * 60 * 60 * 1000
         const oneWeek = 7 * oneDay
         const oneMonth = 30 * oneDay
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return data.reduce((acc: any, user: User) => {
+        return data.reduce((acc: { daily: number, weekly: number, monthly: number }, user: User) => {
             const lastCheckIn = new Date(user.lastCheckIn)
             const timeDiff = now.getTime() - lastCheckIn.getTime()
 
@@ -227,9 +224,8 @@ export default function UserTable() {
     }, [data])
 
     const calculateTotals = useCallback(() => {
-        if (!data) return { downloadSpeed: 0, uploadSpeed: 0, sharedTime: 0 }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return data.reduce((acc: any, user: User) => {
+        if (!data.length) return { downloadSpeed: 0, uploadSpeed: 0, sharedTime: 0 }
+        return data.reduce((acc: { downloadSpeed: number, uploadSpeed: number, sharedTime: number }, user: User) => {
             acc.downloadSpeed += user.downloadSpeed ?? 0
             acc.uploadSpeed += user.uploadSpeed ?? 0
             acc.sharedTime += user.totalTimeOfUsingApp
@@ -245,12 +241,11 @@ export default function UserTable() {
     }
 
     if (error) {
-        return <div>Error: {error.message || 'An error occurred'}</div>
+        return <div>Error: {error instanceof Error ? error.message : 'An error occurred'}</div>
     }
 
     return (
         <div className="w-full">
-
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter usernames..."
@@ -363,7 +358,7 @@ export default function UserTable() {
             <div className="mt-4 text-sm text-muted-foreground">
                 <div>Total Download Speed: {totals.downloadSpeed.toFixed(2)} Mbps</div>
                 <div>Total Upload Speed: {totals.uploadSpeed.toFixed(2)} Mbps</div>
-                <div>Total Shared Time: {totals.sharedTime.toFixed(2) / 3600000} hours</div>
+                <div>Total Shared Time: {(totals.sharedTime / 3600000).toFixed(2)} hours</div>
             </div>
             <Beams />
         </div>

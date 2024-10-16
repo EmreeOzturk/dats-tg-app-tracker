@@ -14,4 +14,5 @@ export interface User {
   evmAddress: string;
   substrateAddress: string;
   lastCheckIn: string;
+  lastSpeedTestDate: string;
 }

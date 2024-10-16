@@ -19,6 +19,7 @@ const useUserData = () => {
             evmAddress: data.evmAddress ?? '',
             substrateAddress: data.substrateAddress ?? '',
             lastCheckIn: data.lastCheckIn ?? '',
+            lastSpeedTestDate: data.lastSpeedTestDate ?? '',
         };
     };
 

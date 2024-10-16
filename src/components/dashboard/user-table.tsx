@@ -233,6 +233,15 @@ export default function UserTable() {
         }, { downloadSpeed: 0, uploadSpeed: 0, sharedTime: 0 })
     }, [data])
 
+    const totalCountOfHasSpeedTestDone = useMemo(() => data.filter(user => user.downloadSpeed && user.uploadSpeed).length, [data])
+    const totalCountOfHasSpeedTestInThisWeek = useMemo(() => data.filter(user => {
+        const lastSpeedTestDate = new Date(user.lastSpeedTestDate) 
+        const now = new Date()
+        const oneWeek = 7 * 24 * 60 * 60 * 1000
+        return now.getTime() - lastSpeedTestDate.getTime() <= oneWeek
+    }).length, [data])
+
+
     const activeUsers = useMemo(() => calculateActiveUsers(), [calculateActiveUsers])
     const totals = useMemo(() => calculateTotals(), [calculateTotals])
 
@@ -359,6 +368,8 @@ export default function UserTable() {
                 <div>Total Download Speed: {totals.downloadSpeed.toFixed(2)} Mbps</div>
                 <div>Total Upload Speed: {totals.uploadSpeed.toFixed(2)} Mbps</div>
                 <div>Total Shared Time: {(totals.sharedTime / 3600000).toFixed(2)} hours</div>
+                <div>Total Users who have done Speed Test: {totalCountOfHasSpeedTestDone}</div>
+                <div>Total Users who have done Speed Test in this week: {totalCountOfHasSpeedTestInThisWeek}</div>
             </div>
             <Beams />
         </div>

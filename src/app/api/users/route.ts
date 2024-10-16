@@ -16,6 +16,7 @@ export async function GET() {
     //     username: 1,
     //     lastCheckIn: -1,
     //     points: -1,
+    //     downloadSpeed: -1,
     //   },
     //   {
     //     name: "user_query_index",
@@ -35,6 +36,7 @@ export async function GET() {
         downloadSpeed: 1,
         uploadSpeed: 1,
         points: 1,
+        lastSpeedTestDate: 1,
         totalTimeOfUsingApp: 1,
         isFollowingTwitter: 1,
         hasJoinedDiscord: 1,
